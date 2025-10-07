@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulário – Cifrador Maçônico </title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0b0f14; color: #FFD700; padding: 30px; }
+    h1 { color: #FFD700	; }
+    form { max-width: 600px; margin: auto; background: #111922; padding: 20px; border-radius: 10px; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; }
+    textarea { width: 100%; min-height: 120px; margin-bottom: 20px; border-radius: 6px; padding: 10px; border: 1px solid    #FFD700; background: #0b1118; color: #FFD700; font-size: 15px; }
+    input[type="submit"], button { background: #FFD700; color: #000; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    input[type="submit"]:hover, button:hover { background: #36a5da; }
+    .output { margin-top: 20px; padding: 15px; background: #091018; border: 1px solid #243244; border-radius: 6px; min-height: 120px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>– Cifrador Maçônico - desenvolvido pelo Ir∴ Diego Ferreira-</h1>
+  <form id="cipherForm">
+    <label for="plain">Digite o texto a ser cifrado:</label>
+    <textarea id="plain" name="plain" placeholder="Ex.: CONNEX MACONARIA"></textarea>
+    <input type="submit" value="Cifrar" />
+    <button type="button" id="clear">Limpar</button>
+  </form>
+
+  <div class="output" id="ciphered"></div>
+
+  <script>
+    const normalize = (s) => s
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}+/gu, '');
+
+    const gridSymbols = ['┌','┬','┐','├','┼','┤','└','┴','┘'];
+    const gridSymbolsDot = gridSymbols.map(s => s + '•');
+    const xSymbols = ['◤','◥','◣','◢'];
+    const xSymbolsDot = xSymbols.map(s => s + '•');
+
+    const letters = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+    const map = new Map();
+    for (let i = 0; i < 9; i++) map.set(letters[i], gridSymbols[i]);
+    for (let i = 0; i < 9; i++) map.set(letters[9 + i], gridSymbolsDot[i]);
+    for (let i = 0; i < 4; i++) map.set(letters[18 + i], xSymbols[i]);
+    for (let i = 0; i < 4; i++) map.set(letters[22 + i], xSymbolsDot[i]);
+
+    const cipher = (text) => {
+      const clean = normalize(text);
+      let out = '';
+      for (const ch of clean) {
+        if (/[A-Z]/.test(ch)) out += map.get(ch) + ' ';
+        else if (/[0-9]/.test(ch)) out += ch;
+        else if (ch === ' ') out += ' ';
+        else if (/\n/.test(ch)) out += '\n';
+      }
+      return out.trim();
+    };
+
+    document.getElementById('cipherForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = document.getElementById('plain').value;
+      document.getElementById('ciphered').textContent = cipher(text);
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+      document.getElementById('plain').value = '';
+      document.getElementById('ciphered').textContent = '';
+    });
+  </script>
+</body>
+</html>
